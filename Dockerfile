@@ -15,7 +15,7 @@ RUN composer install \
     --no-interaction
 
 # ---- Runtime: slim PHP CLI image ----
-FROM php:8.3-cli-alpine AS runtime
+FROM php:8.4-cli-alpine AS runtime
 
 WORKDIR /app
 

@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'help.unrecognized_time' => "Couldn't recognize the time. Examples:\n"
+        . ".tod antharas 14:30 Europe/Kyiv\n"
+        . ".tod baium 1430 UTC+2\n"
+        . ".tod zaken 2025-11-28 14:00 UTC\n"
+        . ".tod orfen now\n"
+        . ".tod core 30m ago",
+
+    'common.last_tod' => 'Last ToD',
+    'common.death_time' => 'Death time',
+    'common.window_start' => 'Window start',
+    'common.window_end' => 'Window end',
+    'common.no_boss' => 'No ToD for **%boss%**.',
+    'common.none_available' => 'No available bosses.',
+
+    'list.header' => 'Current ToDs/windows:',
+    'list.opens_in' => '%boss% — opens in:',
+    'list.closes_in' => '%boss% — closes in:',
+
+    'tod.title' => '💀 %boss% was killed.',
+    'window.title' => '📅 Respawn window: %boss%',
+    'del.title' => '❌ Deleted ToD: %boss%',
+
+    'reminder.start.title' => '⏰ Window opened: %boss%',
+    'reminder.end.title' => '⚠️ Window closed: %boss%',
+    'reminder.start.field' => 'Window start:',
+    'reminder.end.field' => 'Window end: ',
+];

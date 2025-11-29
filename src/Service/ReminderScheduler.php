@@ -18,7 +18,7 @@ class ReminderScheduler
         $this->repo = $repo;
     }
 
-    public function start()
+    public function start(): void
     {
         $discord = $this->discord;
         $repo = $this->repo;
@@ -47,9 +47,9 @@ class ReminderScheduler
 
                 if (!$startReminded && $now >= $start) {
                     $embed = new Embed($discord);
-                    $embed->setTitle("⏰ Окно респа открылось: ".ucfirst($boss))
+                    $embed->setTitle(I18n::t('reminder.start.title', ['%boss%' => ucfirst($boss)]))
                         ->setColor(0x00cc99)
-                        ->addFieldValues("Начало окна:", TimeFormatter::discord($start), true);
+                        ->addFieldValues(I18n::t('reminder.start.field'), TimeFormatter::discord($start), true);
                     // Use MessageBuilder to send embeds (discord-php >=10)
                     $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
                     $info['start_reminded'] = true;
@@ -57,9 +57,9 @@ class ReminderScheduler
 
                 if (!$endReminded && $now >= $end) {
                     $embed = new Embed($discord);
-                    $embed->setTitle("⚠️ Окно респа закрылось: ".ucfirst($boss))
+                    $embed->setTitle(I18n::t('reminder.end.title', ['%boss%' => ucfirst($boss)]))
                         ->setColor(0xFF6600)
-                        ->addFieldValues("Конец окна: ", TimeFormatter::discord($end), true);
+                        ->addFieldValues(I18n::t('reminder.end.field'), TimeFormatter::discord($end), true);
                     // Use MessageBuilder to send embeds (discord-php >=10)
                     $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
                     $info['end_reminded'] = true;
