@@ -19,16 +19,20 @@ FROM php:8.4-cli-alpine AS runtime
 
 WORKDIR /app
 
-# Set UTC timezone to match app expectations
+# Set UTC timezone to match app expectations and install sqlite extensions
 ENV TZ=UTC
-RUN apk add --no-cache tzdata && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apk add --no-cache tzdata sqlite sqlite-dev && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    docker-php-ext-install pdo pdo_sqlite && \
+    mkdir data
 
 # Copy application source
 COPY . /app
 
 # Copy vendor from builder stage (overwrites any host vendor)
 COPY --from=vendor /app/vendor /app/vendor
+
+VOLUME /app/data
 
 # Ensure bot entry is executable (not strictly required for CMD below)
 RUN chmod +x /app/bin/bot.php || true

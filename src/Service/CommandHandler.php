@@ -93,7 +93,7 @@ class CommandHandler
             'start_reminded' => false,
             'end_reminded' => false,
         ];
-        $this->repo->set($boss, $data);
+        $this->repo->set($boss, $message->channel_id, $data);
         $this->repo->save();
 
         $start = $now + 12 * 3600;
@@ -118,7 +118,7 @@ class CommandHandler
 
     private function handleWindow($message, $boss): void
     {
-        $info = $this->repo->get($boss);
+        $info = $this->repo->get($boss, $message->channel_id);
         if (!$info) {
             $message->channel->sendMessage(I18n::t('common.no_boss', ['%boss%' => $boss]))
                 ->then(function () use ($message) {
@@ -151,7 +151,7 @@ class CommandHandler
 
     private function handleDelete($message, $boss): void
     {
-        $info = $this->repo->get($boss);
+        $info = $this->repo->get($boss, $message->channel_id);
         if (!$info) {
             $message->channel->sendMessage(I18n::t('common.no_boss', ['%boss%' => $boss]))
                 ->then(function () use ($message) {
@@ -162,7 +162,7 @@ class CommandHandler
             return;
         }
 
-        $this->repo->delete($boss);
+        $this->repo->delete($boss, $message->channel_id);
         $this->repo->save();
 
         $embed = new Embed($this->discord);
@@ -180,7 +180,7 @@ class CommandHandler
 
     private function handleList($message): void
     {
-        $all = $this->repo->all();
+        $all = $this->repo->allByChannel($message->channel_id);
         $now = time();
         $lines = [];
         foreach ($all as $boss => $info) {

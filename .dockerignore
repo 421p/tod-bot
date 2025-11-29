@@ -11,6 +11,8 @@ coverage
 *.log
 Dockerfile*
 docker-compose*.yml
+.phpunit.result.cache
+data
 
 # Keep essential files
 !composer.json
@@ -18,4 +20,3 @@ docker-compose*.yml
 !bin/
 !src/
 !bot.php
-!tods.json

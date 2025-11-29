@@ -8,5 +8,5 @@ services:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - TZ=UTC
     volumes:
-      - ./tods.json:/app/tods.json
+      - ./data:/app/data
     restart: unless-stopped

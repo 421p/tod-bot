@@ -5,28 +5,40 @@ namespace NapevBot\Repository;
 interface TodRepositoryInterface
 {
     /**
-     * @return array<string,array{tod:int,channel:string,start_reminded:bool,end_reminded:bool}>
+     * Returns all ToDs grouped by channel id.
+     * @return array<string, array<string, array{tod:int,channel:string,start_reminded:bool,end_reminded:bool}>>
      */
     public function all();
 
     /**
-     * @param string $boss
-     * @return array|null
+     * Returns all ToDs for a specific channel.
+     *
+     * @param string $channel
+     * @return array<string, array{tod:int,channel:string,start_reminded:bool,end_reminded:bool}>
      */
-    public function get($boss);
+    public function allByChannel($channel);
 
     /**
      * @param string $boss
+     * @param string $channel
+     * @return array|null
+     */
+    public function get($boss, $channel);
+
+    /**
+     * @param string $boss
+     * @param string $channel
      * @param array $data
      * @return void
      */
-    public function set($boss, $data);
+    public function set($boss, $channel, $data);
 
     /**
      * @param string $boss
+     * @param string $channel
      * @return void
      */
-    public function delete($boss);
+    public function delete($boss, $channel);
 
     /**
      * Persist current state to storage.

@@ -9,8 +9,8 @@ use NapevBot\Repository\TodRepositoryInterface;
 
 class ReminderScheduler
 {
-    private $discord;
-    private $repo;
+    private Discord $discord;
+    private TodRepositoryInterface $repo;
 
     public function __construct(Discord $discord, TodRepositoryInterface $repo)
     {
@@ -25,48 +25,43 @@ class ReminderScheduler
 
         $discord->loop->addPeriodicTimer(60, function () use ($discord, $repo) {
             $now = time();
-            $tods = $repo->all();
+            $tods = $repo->all(); // [channelId => [boss => info]]
 
-            foreach ($tods as $boss => $info) {
-                $tod = $info['tod'] ?? 0;
-                $channelId = $info['channel'] ?? null;
-                $startReminded = !empty($info['start_reminded']);
-                $endReminded = !empty($info['end_reminded']);
-
-                if (!$channelId) {
-                    continue;
-                }
-
-                $start = $tod + 12 * 3600;
-                $end = $tod + 21 * 3600;
+            foreach ($tods as $channelId => $byBoss) {
+                if (!$channelId) { continue; }
 
                 $channel = $discord->getChannel($channelId);
-                if (!$channel) {
-                    continue;
-                }
+                if (!$channel) { continue; }
 
-                if (!$startReminded && $now >= $start) {
-                    $embed = new Embed($discord);
-                    $embed->setTitle(I18n::t('reminder.start.title', ['%boss%' => ucfirst($boss)]))
-                        ->setColor(0x00cc99)
-                        ->addFieldValues(I18n::t('reminder.start.field'), TimeFormatter::discord($start), true);
-                    // Use MessageBuilder to send embeds (discord-php >=10)
-                    $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
-                    $info['start_reminded'] = true;
-                }
+                foreach ($byBoss as $boss => $info) {
+                    $tod = $info['tod'] ?? 0;
+                    $startReminded = !empty($info['start_reminded']);
+                    $endReminded = !empty($info['end_reminded']);
 
-                if (!$endReminded && $now >= $end) {
-                    $embed = new Embed($discord);
-                    $embed->setTitle(I18n::t('reminder.end.title', ['%boss%' => ucfirst($boss)]))
-                        ->setColor(0xFF6600)
-                        ->addFieldValues(I18n::t('reminder.end.field'), TimeFormatter::discord($end), true);
-                    // Use MessageBuilder to send embeds (discord-php >=10)
-                    $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
-                    $info['end_reminded'] = true;
-                }
+                    $start = $tod + 12 * 3600;
+                    $end = $tod + 21 * 3600;
 
-                // Persist updates if changed
-                $repo->set($boss, $info);
+                    if (!$startReminded && $now >= $start) {
+                        $embed = new Embed($discord);
+                        $embed->setTitle(I18n::t('reminder.start.title', ['%boss%' => ucfirst($boss)]))
+                            ->setColor(0x00cc99)
+                            ->addFieldValues(I18n::t('reminder.start.field'), TimeFormatter::discord($start), true);
+                        $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
+                        $info['start_reminded'] = true;
+                    }
+
+                    if (!$endReminded && $now >= $end) {
+                        $embed = new Embed($discord);
+                        $embed->setTitle(I18n::t('reminder.end.title', ['%boss%' => ucfirst($boss)]))
+                            ->setColor(0xFF6600)
+                            ->addFieldValues(I18n::t('reminder.end.field'), TimeFormatter::discord($end), true);
+                        $channel->sendMessage(MessageBuilder::new()->addEmbed($embed));
+                        $info['end_reminded'] = true;
+                    }
+
+                    // Persist updates if changed
+                    $repo->set($boss, $channelId, $info);
+                }
             }
 
             $repo->save();

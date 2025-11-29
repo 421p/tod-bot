@@ -32,9 +32,9 @@ class CommandHandlerTest extends TestCase
 
         $handler($msg);
 
-        $this->assertArrayHasKey('antharas', $repo->all());
-        $this->assertSame($epoch, $repo->get('antharas')['tod']);
-        $this->assertSame($msg->channel_id, $repo->get('antharas')['channel']);
+        $this->assertArrayHasKey('antharas', $repo->allByChannel($msg->channel_id));
+        $this->assertSame($epoch, $repo->get('antharas', $msg->channel_id)['tod']);
+        $this->assertSame($msg->channel_id, $repo->get('antharas', $msg->channel_id)['channel']);
         $this->assertGreaterThan(0, $channel->sendCount);
         $this->assertInstanceOf(Discord\Builders\MessageBuilder::class, $channel->lastPayload);
         $this->assertGreaterThan(0, $msg->deletedCount);
@@ -51,8 +51,8 @@ class CommandHandlerTest extends TestCase
         $handler($msg);
 
         $expected = strtotime('2025-11-28 14:00:00 UTC');
-        $this->assertArrayHasKey('orfen', $repo->all());
-        $this->assertSame($expected, $repo->get('orfen')['tod']);
+        $this->assertArrayHasKey('orfen', $repo->allByChannel($channel->id()));
+        $this->assertSame($expected, $repo->get('orfen', $channel->id())['tod']);
         $this->assertInstanceOf(Discord\Builders\MessageBuilder::class, $channel->lastPayload);
         $this->assertGreaterThan(0, $msg->deletedCount);
     }
@@ -93,9 +93,9 @@ class CommandHandlerTest extends TestCase
     {
         $discord = $this->makeDiscordMock();
         $repo = new InMemoryRepo();
-        $repo->set('zaken', [
+        $repo->set('zaken', 'test-channel', [
             'tod' => 1700000000,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => false,
             'end_reminded' => false,
         ]);
@@ -114,9 +114,9 @@ class CommandHandlerTest extends TestCase
     {
         $discord = $this->makeDiscordMock();
         $repo = new InMemoryRepo();
-        $repo->set('baium', [
+        $repo->set('baium', 'test-channel', [
             'tod' => 1700000000,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => false,
             'end_reminded' => false,
         ]);
@@ -150,9 +150,9 @@ class CommandHandlerTest extends TestCase
     {
         $discord = $this->makeDiscordMock();
         $repo = new InMemoryRepo();
-        $repo->set('core', [
+        $repo->set('core', 'test-channel', [
             'tod' => 1700000000,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => false,
             'end_reminded' => false,
         ]);
@@ -164,7 +164,7 @@ class CommandHandlerTest extends TestCase
 
         $this->assertSame(1, $channel->sendCount);
         $this->assertInstanceOf(Discord\Builders\MessageBuilder::class, $channel->lastPayload);
-        $this->assertNull($repo->get('core'));
+        $this->assertNull($repo->get('core', 'test-channel'));
         $this->assertGreaterThan(0, $msg->deletedCount);
     }
 
@@ -179,8 +179,8 @@ class CommandHandlerTest extends TestCase
         $handler($msg);
 
         // We cannot rely on today’s date here; just assert that it set something and responded with embed
-        $this->assertArrayHasKey('core', $repo->all());
-        $this->assertIsInt($repo->get('core')['tod']);
+        $this->assertArrayHasKey('core', $repo->allByChannel('test-channel'));
+        $this->assertIsInt($repo->get('core', 'test-channel')['tod']);
         $this->assertInstanceOf(Discord\Builders\MessageBuilder::class, $channel->lastPayload);
         $this->assertGreaterThan(0, $msg->deletedCount);
     }
@@ -195,23 +195,23 @@ class CommandHandlerTest extends TestCase
         $now = time();
         // Prepare 3 bosses:
         // 1) Not started yet: ToD 10h ago => start at +2h from now
-        $repo->set('antharas', [
+        $repo->set('antharas', 'test-channel', [
             'tod' => $now - 10 * 3600,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => false,
             'end_reminded' => false,
         ]);
         // 2) In progress: ToD 15h ago => window started 3h ago, ends in 6h
-        $repo->set('zaken', [
+        $repo->set('zaken', 'test-channel', [
             'tod' => $now - 15 * 3600,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => true,
             'end_reminded' => false,
         ]);
         // 3) Closed: ToD 22h ago => window ended 1h ago
-        $repo->set('orfen', [
+        $repo->set('orfen', 'test-channel', [
             'tod' => $now - 22 * 3600,
-            'channel' => 'chanX',
+            'channel' => 'test-channel',
             'start_reminded' => true,
             'end_reminded' => true,
         ]);
@@ -237,12 +237,18 @@ class FakeChannel
 {
     public $sendCount = 0;
     public $lastPayload = null;
+    private $id = 'test-channel';
 
     public function sendMessage($payload): PromiseInterface
     {
         $this->sendCount++;
         $this->lastPayload = $payload;
         return React\Promise\resolve(true);
+    }
+
+    public function id(): string
+    {
+        return $this->id;
     }
 }
 
@@ -269,10 +275,12 @@ class FakeMessage
 
 class InMemoryRepo implements TodRepositoryInterface
 {
+    // [channel => [boss => info]]
     private $data = [];
     public function all() { return $this->data; }
-    public function get($boss) { return isset($this->data[$boss]) ? $this->data[$boss] : null; }
-    public function set($boss, $data) { $this->data[$boss] = $data; }
-    public function delete($boss) { unset($this->data[$boss]); }
+    public function allByChannel($channel) { return $this->data[$channel] ?? []; }
+    public function get($boss, $channel) { return $this->data[$channel][$boss] ?? null; }
+    public function set($boss, $channel, $data) { if (!isset($this->data[$channel])) $this->data[$channel] = []; $this->data[$channel][$boss] = $data; }
+    public function delete($boss, $channel) { unset($this->data[$channel][$boss]); }
     public function save() { /* no-op */ }
 }
