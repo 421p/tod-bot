@@ -6,6 +6,7 @@ services:
     container_name: napevbot
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TOD_STORAGE=sqlite
       - TZ=UTC
     volumes:
       - ./data:/app/data
