@@ -1,0 +1,21 @@
+# Docker build context exclusions
+.git
+.gitignore
+.idea
+.vscode
+node_modules
+vendor
+tests
+phpunit.xml*
+coverage
+*.log
+Dockerfile*
+docker-compose*.yml
+
+# Keep essential files
+!composer.json
+!composer.lock
+!bin/
+!src/
+!bot.php
+!tods.json

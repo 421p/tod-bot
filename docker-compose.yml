@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  bot:
+    image: 421p/cybernapev:latest
+    container_name: napevbot
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TZ=UTC
+    volumes:
+      - ./tods.json:/app/tods.json
+    restart: unless-stopped
