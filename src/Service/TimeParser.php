@@ -50,7 +50,7 @@ class TimeParser
             }
         }
 
-        // HH:MM or HHMM → assume today in provided timezone
+        // HH:MM or HHMM → assume today in provided timezone (relative to provided $now)
         if (preg_match('/^(\d{1,2}):(\d{2})$/', $timeArg, $m) || preg_match('/^(\d{3,4})$/', $timeArg, $m2)) {
             if (!empty($m2)) {
                 $str = $m2[1];
@@ -62,9 +62,14 @@ class TimeParser
             }
             if ($h >= 0 && $h < 24 && $i >= 0 && $i < 60) {
                 if ($iana) {
-                    $dt = new DateTime('now', $iana);
-                    $dt->setTime($h, $i, 0);
-                    // Keep current date in that tz
+                    // Build the reference date from $now in the target IANA timezone
+                    $ref = new DateTime('@' . $now);
+                    $ref->setTimezone($iana);
+                    // Set the provided wall-clock time on that date
+                    $ref->setTime($h, $i, 0);
+                    // Convert to UTC epoch
+                    $utcTs = self::toUtcTimestamp($ref);
+                    return ['ts' => $utcTs, 'tz' => $tzLabel];
                 } else {
                     // Offset-based tz: build using UTC then subtract offset
                     $utc = new DateTime('@' . $now); // immutable point
@@ -75,12 +80,6 @@ class TimeParser
                     $ts = $dt->getTimestamp() - (int) $offsetSeconds;
                     return ['ts' => $ts, 'tz' => $tzLabel];
                 }
-                // Convert to UTC
-                $dt->setDate((int) $dt->format('Y'), (int) $dt->format('m'), (int) $dt->format('d'));
-                $tsLocal = $dt->getTimestamp();
-                // $tsLocal is epoch for that tz; convert to UTC by creating DateTime in UTC for same wall time and adjusting
-                $utcTs = self::toUtcTimestamp($dt);
-                return ['ts' => $utcTs, 'tz' => $tzLabel];
             }
         }
 

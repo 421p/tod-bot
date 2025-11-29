@@ -209,7 +209,7 @@ class CommandHandler
         if (empty($lines)) {
             $text = "Нет доступных боссов.";
         } else {
-            $text = "Текущие ТоДы:\n" . implode("\n", $lines);
+            $text = "Текущие ТоД/окна:\n" . implode("\n", $lines);
         }
 
         $message->channel->sendMessage($text)
