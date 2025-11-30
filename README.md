@@ -76,16 +76,16 @@ Notes
 1) .tod <boss> [time] [timezone]
 - Sets ToD for a boss. If time is omitted, now is used. If timezone is omitted, UTC is used.
 - Examples:
-  - .tod antharas
-  - .tod antharas now
-  - .tod antharas 1700000000 UTC (unix epoch)
-  - .tod antharas 14:30 Europe/Kyiv (HH:MM and IANA timezone)
-  - .tod antharas 1430 UTC+2 (HHMM and UTC offset)
-  - .tod antharas 2025-11-28 14:00 UTC (full date and time)
-  - .tod antharas 28.11.2025 14:00 UTC (dd.mm.yyyy HH:MM)
-  - .tod antharas 28-11 14:00 UTC (dd-mm HH:MM; current year assumed)
-  - .tod antharas 30m ago (relative)
-  - .tod antharas 2h (relative; treated as “ago”)
+  - .tod skylancer
+  - .tod skylancer now
+  - .tod skylancer 1700000000 UTC (unix epoch)
+  - .tod skylancer 14:30 Europe/Kyiv (HH:MM and IANA timezone)
+  - .tod skylancer 1430 UTC+2 (HHMM and UTC offset)
+  - .tod skylancer 2025-11-28 14:00 UTC (full date and time)
+  - .tod skylancer 28.11.2025 14:00 UTC (dd.mm.yyyy HH:MM)
+  - .tod skylancer 28-11 14:00 UTC (dd-mm HH:MM; current year assumed)
+  - .tod skylancer 30m ago (relative)
+  - .tod skylancer 2h (relative; treated as “ago”)
 
 ### Accepted time formats
 - now
@@ -103,12 +103,12 @@ Notes
 2) .window <boss> (alias: .w)
 - Shows last ToD and window start/end for the boss.
 - Examples:
-  - .window baium
-  - .w zaken
+  - .window behemoth
+  - .w hellman
 
 3) .del <boss>
 - Deletes the stored ToD.
-- Example: .del orfen
+- Example: .del icarus
 
 4) .list (aliases: .ls, .all, .список)
 - Lists bosses for the current channel whose window has not yet closed.
