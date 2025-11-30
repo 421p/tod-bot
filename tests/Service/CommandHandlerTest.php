@@ -69,7 +69,7 @@ class CommandHandlerTest extends TestCase
 
         $this->assertSame(1, $channel->sendCount);
         $this->assertIsString($channel->lastPayload);
-        $this->assertStringContainsString('Не удалось распознать время', $channel->lastPayload);
+        $this->assertStringContainsString("Couldn't recognize the time", $channel->lastPayload);
         $this->assertGreaterThan(0, $msg->deletedCount);
     }
 
@@ -85,7 +85,7 @@ class CommandHandlerTest extends TestCase
 
         $this->assertSame(1, $channel->sendCount);
         $this->assertIsString($channel->lastPayload);
-        $this->assertStringContainsString('Нету ТоДа', $channel->lastPayload);
+        $this->assertStringContainsString('No ToD', $channel->lastPayload);
         $this->assertGreaterThan(0, $msg->deletedCount);
     }
 
@@ -221,7 +221,7 @@ class CommandHandlerTest extends TestCase
 
         $this->assertSame(1, $channel->sendCount);
         $this->assertIsString($channel->lastPayload);
-        $this->assertStringContainsString('Текущие ТоД/окна', $channel->lastPayload);
+        $this->assertStringContainsString('Current ToDs/windows', $channel->lastPayload);
         // Should include Antharas and Zaken, not Orfen
         $this->assertStringContainsString('Antharas', $channel->lastPayload);
         $this->assertStringContainsString('Zaken', $channel->lastPayload);

@@ -2,11 +2,11 @@
 
 return [
     'help.unrecognized_time' => "Не удалось распознать время. Примеры:\n"
-        . ".tod antharas 14:30 Europe/Kyiv\n"
-        . ".tod baium 1430 UTC+2\n"
-        . ".tod zaken 2025-11-28 14:00 UTC\n"
-        . ".tod orfen now\n"
-        . ".tod core 30m ago",
+        . ".tod icarus 14:30 Europe/Kyiv\n"
+        . ".tod behemoth 1430 UTC+2\n"
+        . ".tod catgang 2025-11-28 14:00 UTC\n"
+        . ".tod shuriel now\n"
+        . ".tod skylancer 30m ago",
 
     'common.last_tod' => 'Последний ТоД',
     'common.death_time' => 'Время смерти',

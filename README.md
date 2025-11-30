@@ -14,7 +14,7 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
 - User-local time display using Discord dynamic timestamps (tokens like t:UNIX:STYLE)
 - Auto-deletes the invoking user message after handling (if the bot has permissions)
 - Storage backends: JSON (default) or SQLite
-- Translations: Russian (default) and English via environment variable
+- Translations: English (default), plus Russian, French, Greek, Portuguese, and Ukrainian via environment variable
 - Dockerfile and docker-compose included
 
 ### Requirements
@@ -34,7 +34,7 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
    - DISCORD_TOKEN: your Discord bot token (required)
    - TOD_STORAGE: json or sqlite (default: json)
    - TOD_SQLITE: path to SQLite file when TOD_STORAGE=sqlite (default: ./data/tods.sqlite)
-   - BOT_LOCALE: ru or en (default: en)
+   - BOT_LOCALE: en (default) or one of ru, fr, el, pt, uk
    - TZ: UTC is recommended
 3. Run
    - php bin/bot.php
@@ -56,7 +56,7 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
 - DISCORD_TOKEN — required
 - TOD_STORAGE — json (default) or sqlite
 - TOD_SQLITE — path to DB file when using sqlite (default: ./data/tods.sqlite)
-- BOT_LOCALE — en (default) or ru
+- BOT_LOCALE — en (default) or one of: ru, fr, el, pt, uk
 - TZ — system timezone; the app itself uses UTC internally
 
 ### Data files
@@ -120,8 +120,15 @@ Notes
 
 ### Localization (i18n)
 - Default locale: en
-- Switch to Russian: set BOT_LOCALE=ru
-- Translation files: `translations/messages.ru.php` and `translations/messages.en.php`
+- Supported locales: en, ru, fr, el, pt, uk
+- Switch locale: set BOT_LOCALE=<code> (e.g., BOT_LOCALE=ru)
+- Translation files:
+  - translations/messages.en.php
+  - translations/messages.ru.php
+  - translations/messages.fr.php
+  - translations/messages.el.php
+  - translations/messages.pt.php
+  - translations/messages.uk.php
 
 ### Project internals
 - Entry point: bin/bot.php
