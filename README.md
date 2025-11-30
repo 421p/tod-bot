@@ -34,7 +34,7 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
    - DISCORD_TOKEN: your Discord bot token (required)
    - TOD_STORAGE: json or sqlite (default: json)
    - TOD_SQLITE: path to SQLite file when TOD_STORAGE=sqlite (default: ./data/tods.sqlite)
-   - BOT_LOCALE: ru or en (default: ru)
+   - BOT_LOCALE: ru or en (default: en)
    - TZ: UTC is recommended
 3. Run
    - php bin/bot.php
@@ -56,7 +56,7 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
 - DISCORD_TOKEN — required
 - TOD_STORAGE — json (default) or sqlite
 - TOD_SQLITE — path to DB file when using sqlite (default: ./data/tods.sqlite)
-- BOT_LOCALE — ru (default) or en
+- BOT_LOCALE — en (default) or ru
 - TZ — system timezone; the app itself uses UTC internally
 
 ### Data files
@@ -120,7 +120,7 @@ Notes
 
 ### Localization (i18n)
 - Default locale: en
-- Switch to Russian: set BOT_LOCALE=rn
+- Switch to Russian: set BOT_LOCALE=ru
 - Translation files: `translations/messages.ru.php` and `translations/messages.en.php`
 
 ### Project internals

@@ -17,7 +17,7 @@ class I18n
 
         $locale = getenv('BOT_LOCALE');
         if (!$locale) {
-            $locale = 'ru';
+            $locale = 'en';
         }
 
         $translator = new Translator($locale);
