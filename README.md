@@ -1,6 +1,32 @@
 ## Discord ToD tracker
 
-Overview
+### Quick install (Docker compose)
+
+1) Create a file named docker-compose.yml in an empty folder with this content:
+
+```yaml
+version: "3.8"
+services:
+  bot:
+    image: ghcr.io/421p/tod-bot:latest
+    container_name: tod-bot
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TOD_STORAGE=sqlite
+      - TZ=UTC
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+```
+
+2) Start it
+- `export DISCORD_TOKEN=your_token`
+- `docker compose up -d`
+
+3) In Discord, in the channel where the bot is present, try a first ToD:
+- `.tod hallate 14:30 Europe/Kyiv`
+
+### Overview
 TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show respawn windows, and post reminders when a window opens and closes. Currently supports standard Lineage 2 RB respawn time 12+9.
 
 ### Features
@@ -39,18 +65,46 @@ TodBot is a lightweight Discord bot to record boss Time of Death (ToD), show res
 3. Run
    - php bin/bot.php
 
-### Installation (Docker)
+### Installation (Docker) — recommended
+- We recommend Docker as the easiest and most reliable way to run the bot.
+
 - Build locally and run
   - docker build -t TodBot:latest .
   - docker run -d --name TodBot -e DISCORD_TOKEN=your_token -e TOD_STORAGE=sqlite -e TZ=UTC -v "$(pwd)/data:/app/data" --restart unless-stopped TodBot:latest
 
-- Using docker-compose
+- Using docker-compose (example)
+  Create a docker-compose.yml file with the following content:
+
+  ```yaml
+  version: "3.8"
+  services:
+    bot:
+      image: ghcr.io/421p/tod-bot:latest
+      container_name: tod-bot
+      environment:
+        - DISCORD_TOKEN=${DISCORD_TOKEN}
+        - TOD_STORAGE=sqlite
+        - TZ=UTC
+      volumes:
+        - ./data:/app/data
+      restart: unless-stopped
+  ```
+
+  Then run:
   - export DISCORD_TOKEN=your_token
   - docker compose up -d
 
-- Pulling from a container registry (if configured)
-  - docker pull ghcr.io/<owner>/<repo>:latest
-  - docker run -d --name TodBot -e DISCORD_TOKEN=your_token -v "$(pwd)/data:/app/data" --restart unless-stopped ghcr.io/<owner>/<repo>:latest
+- Pulling the published image (GitHub Container Registry)
+  - docker login ghcr.io -u YOUR_GITHUB_USERNAME -p YOUR_GITHUB_TOKEN
+  - docker pull ghcr.io/421p/tod-bot:latest
+  - docker run -d \
+      --name TodBot \
+      -e DISCORD_TOKEN=your_token \
+      -e TOD_STORAGE=sqlite \
+      -e TZ=UTC \
+      -v "$(pwd)/data:/app/data" \
+      --restart unless-stopped \
+      ghcr.io/421p/tod-bot:latest
 
 ### Configuration
 - DISCORD_TOKEN — required
